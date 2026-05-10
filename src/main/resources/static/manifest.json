@@ -1,0 +1,19 @@
+{
+  "name": "Hari Personal Agent",
+  "short_name": "Hari",
+  "description": "Hari is a personal agent for chat, memory, tasks, voice, and calculations.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f5",
+  "theme_color": "#101b21",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
