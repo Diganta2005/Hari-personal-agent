@@ -111,6 +111,56 @@
         </form>
       </section>
     </main>
+
+    <aside class="agent-panel" aria-label="Hari agent panel">
+      <section class="agent-card agent-hero">
+        <div class="agent-orbit">
+          <span></span>
+          <span></span>
+          <strong>H</strong>
+        </div>
+        <div>
+          <p class="panel-title">Agent State</p>
+          <h3 id="agentState">Ready</h3>
+          <p id="agentHint">Waiting for your next instruction.</p>
+        </div>
+      </section>
+
+      <section class="agent-card">
+        <div class="panel-title">Detected Intent</div>
+        <div id="intentLabel" class="intent-label">General chat</div>
+        <div class="intent-meter">
+          <span id="intentMeter"></span>
+        </div>
+      </section>
+
+      <section class="agent-card">
+        <div class="panel-title">Workspace Snapshot</div>
+        <div class="metric-grid">
+          <div>
+            <span id="chatCount">0</span>
+            <small>Chats</small>
+          </div>
+          <div>
+            <span id="messageCount">0</span>
+            <small>Messages</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="agent-card prompt-card">
+        <div class="panel-title">Suggested Workflows</div>
+        <button type="button" data-prompt="Create a learning roadmap for Java Spring Boot">Learning roadmap</button>
+        <button type="button" data-prompt="take a note I should improve Hari UI and UX">Capture note</button>
+        <button type="button" data-prompt="remind me to push Hari updates to GitHub">Create task</button>
+        <button type="button" data-prompt="what is (125 + 75) * 4 / 2">Run calculation</button>
+      </section>
+
+      <section class="agent-card privacy-card">
+        <div class="panel-title">Privacy</div>
+        <p>Local chat history stays in this browser. API keys stay on the server environment.</p>
+      </section>
+    </aside>
   </div>
 
   <script type="module" src="three-scene.js"></script>

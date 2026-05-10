@@ -9,6 +9,12 @@ const sessionList = document.getElementById("sessionList");
 const micButton = document.getElementById("micButton");
 const voiceToggleButton = document.getElementById("voiceToggleButton");
 const sendButton = form.querySelector("button[type='submit']");
+const agentState = document.getElementById("agentState");
+const agentHint = document.getElementById("agentHint");
+const intentLabel = document.getElementById("intentLabel");
+const intentMeter = document.getElementById("intentMeter");
+const chatCount = document.getElementById("chatCount");
+const messageCount = document.getElementById("messageCount");
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const STORAGE_KEY = "hari.chat.sessions";
 let recognition = null;
@@ -92,7 +98,7 @@ sessionList.addEventListener("click", function (event) {
 });
 
 document.addEventListener("click", async function (event) {
-  const button = event.target.closest(".nav-item[data-prompt], .tool-stack [data-prompt]");
+  const button = event.target.closest(".nav-item[data-prompt], .tool-stack [data-prompt], .agent-panel [data-prompt]");
   if (!button) {
     return;
   }
@@ -156,6 +162,7 @@ micButton.addEventListener("click", function () {
 voiceToggleButton.addEventListener("click", function () {
   speakReplies = !speakReplies;
   voiceToggleButton.textContent = speakReplies ? "Voice on" : "Voice off";
+  updateAgentState(speakReplies ? "Voice Ready" : "Ready", speakReplies ? "Hari will speak replies out loud." : "Waiting for your next instruction.");
 
   if (!speakReplies) {
     window.speechSynthesis.cancel();
@@ -170,6 +177,8 @@ async function sendMessage(text) {
   isSending = true;
   sendButton.disabled = true;
   micButton.disabled = true;
+  updateIntentPanel(text);
+  updateAgentState("Thinking", "Hari is choosing between tools, memory, and AI response.");
   removeWelcome();
   const userMessage = saveMessage("You", text, "user");
   addMessage("You", text, "user", userMessage.id);
@@ -190,12 +199,14 @@ async function sendMessage(text) {
     typing.remove();
     const hariMessage = saveMessage("Hari", data.reply, "hari");
     addMessage("Hari", data.reply, "hari", hariMessage.id);
+    updateAgentState("Ready", "Response complete. You can continue the same workflow.");
     speak(data.reply);
   } catch (error) {
     const errorMessage = "I cannot reach Hari's server right now. Check that the app is running.";
     typing.remove();
     const hariMessage = saveMessage("Hari", errorMessage, "hari");
     addMessage("Hari", errorMessage, "hari", hariMessage.id);
+    updateAgentState("Needs Server", "Hari could not reach the backend service.");
     speak(errorMessage);
   } finally {
     isSending = false;
@@ -386,6 +397,7 @@ function loadSessions() {
 
 function saveSessions() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+  updateWorkspaceStats();
 }
 
 function speak(text) {
@@ -401,8 +413,49 @@ function speak(text) {
   window.speechSynthesis.speak(utterance);
 }
 
+function updateAgentState(state, hint) {
+  agentState.textContent = state;
+  agentHint.textContent = hint;
+}
+
+function updateIntentPanel(text) {
+  const lowerText = text.toLowerCase();
+  let label = "General chat";
+  let confidence = "42%";
+
+  if (lowerText.includes("remember")) {
+    label = "Memory update";
+    confidence = "84%";
+  } else if (lowerText.includes("note")) {
+    label = "Note capture";
+    confidence = "78%";
+  } else if (lowerText.includes("task") || lowerText.includes("remind me")) {
+    label = "Task planning";
+    confidence = "82%";
+  } else if (lowerText.includes("calculate") || /\d+\s*(\+|-|\*|\/|\^|%|plus|minus|times|divided)/.test(lowerText)) {
+    label = "Calculation";
+    confidence = "88%";
+  } else if (lowerText.includes("time") || lowerText.includes("date")) {
+    label = "Time lookup";
+    confidence = "76%";
+  }
+
+  intentLabel.textContent = label;
+  intentMeter.style.width = confidence;
+}
+
+function updateWorkspaceStats() {
+  const totalMessages = sessions.reduce(function (count, session) {
+    return count + session.messages.length;
+  }, 0);
+
+  chatCount.textContent = sessions.length;
+  messageCount.textContent = totalMessages;
+}
+
 renderCurrentSession();
 renderSessionList();
+updateWorkspaceStats();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
