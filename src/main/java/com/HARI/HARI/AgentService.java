@@ -44,35 +44,42 @@ public class AgentService {
             return help();
         }
 
-        if (lowerMessage.equals("time") || lowerMessage.equals("date") || lowerMessage.contains("what time is it")) {
+        if (lowerMessage.equals("time") || lowerMessage.equals("date") || lowerMessage.contains("what time is it")
+                || lowerMessage.contains("today's time") || lowerMessage.contains("current time")) {
             return currentTime();
         }
 
-        if (lowerMessage.startsWith("remember ")) {
-            return remember(cleanMessage);
+        if (lowerMessage.startsWith("remember ") || lowerMessage.startsWith("please remember ")
+                || lowerMessage.startsWith("remember that ")) {
+            return remember(extractAfterIntent(cleanMessage, "remember", "please remember", "remember that"));
         }
 
-        if (lowerMessage.equals("show memory") || lowerMessage.equals("what do you remember")) {
+        if (lowerMessage.equals("show memory") || lowerMessage.equals("what do you remember")
+                || lowerMessage.contains("show me my memory") || lowerMessage.contains("what have you remembered")) {
             return showMemory();
         }
 
-        if (lowerMessage.startsWith("save note ") || lowerMessage.startsWith("note ")) {
-            return saveNote(cleanMessage);
+        if (lowerMessage.startsWith("save note ") || lowerMessage.startsWith("note ")
+                || lowerMessage.startsWith("take a note ") || lowerMessage.startsWith("make a note ")) {
+            return saveNote(extractAfterIntent(cleanMessage, "save note", "note", "take a note", "make a note"));
         }
 
-        if (lowerMessage.equals("show notes") || lowerMessage.equals("my notes")) {
+        if (lowerMessage.equals("show notes") || lowerMessage.equals("my notes")
+                || lowerMessage.contains("show me my notes") || lowerMessage.contains("list my notes")) {
             return showList("notes", notes);
         }
 
-        if (lowerMessage.startsWith("delete note ")) {
-            return removeItem(cleanMessage, "delete note", notes, "note");
+        if (lowerMessage.startsWith("delete note ") || lowerMessage.startsWith("remove note ")) {
+            return removeItem(extractAfterIntent(cleanMessage, "delete note", "remove note"), "", notes, "note");
         }
 
-        if (lowerMessage.startsWith("add task ") || lowerMessage.startsWith("todo ")) {
-            return addTask(cleanMessage);
+        if (lowerMessage.startsWith("add task ") || lowerMessage.startsWith("todo ")
+                || lowerMessage.startsWith("create task ") || lowerMessage.startsWith("remind me to ")) {
+            return addTask(extractAfterIntent(cleanMessage, "add task", "todo", "create task", "remind me to"));
         }
 
-        if (lowerMessage.equals("show tasks") || lowerMessage.equals("my tasks")) {
+        if (lowerMessage.equals("show tasks") || lowerMessage.equals("my tasks")
+                || lowerMessage.contains("show me my tasks") || lowerMessage.contains("list my tasks")) {
             return showList("tasks", tasks);
         }
 
@@ -81,7 +88,8 @@ public class AgentService {
             return removeItem(cleanMessage, command, tasks, "task");
         }
 
-        if (lowerMessage.startsWith("calculate ") || looksLikeMath(lowerMessage)) {
+        if (lowerMessage.startsWith("calculate ") || lowerMessage.startsWith("what is ")
+                || lowerMessage.startsWith("solve ") || looksLikeMath(lowerMessage)) {
             return calculate(cleanMessage);
         }
 
@@ -96,17 +104,16 @@ public class AgentService {
         return """
                 I can help with these commands:
                 remember my goal is Build an agentic AI
-                show memory
-                save note I am learning Java
-                show notes
-                delete note 1
-                add task Build Hari memory
-                show tasks
-                complete task 1
-                calculate (12 + 8) * 3
-                calculate 20% of 450
-                calculate 2^8 + sqrt(81)
-                time
+                please remember my favorite language is Java
+                show me my memory
+                take a note I am learning NLP
+                show me my notes
+                remind me to practice coding
+                show me my tasks
+                what is (12 + 8) * 3
+                solve 20% of 450
+                what is 2^8 + sqrt(81)
+                what is today's time
 
                 If your OpenAI API key is set, I can also answer normal questions using a real AI model.
                 """;
@@ -184,7 +191,9 @@ public class AgentService {
     }
 
     private String removeItem(String message, String command, List<String> items, String itemName) {
-        String numberText = message.replaceFirst("(?i)^" + Pattern.quote(command) + "\\s+", "").trim();
+        String numberText = command.isBlank()
+                ? message.trim()
+                : message.replaceFirst("(?i)^" + Pattern.quote(command) + "\\s+", "").trim();
 
         try {
             int index = Integer.parseInt(numberText) - 1;
@@ -201,7 +210,12 @@ public class AgentService {
     }
 
     private String calculate(String message) {
-        String originalExpression = message.replaceFirst("(?i)^calculate\\s+", "").trim();
+        String originalExpression = message
+                .replaceFirst("(?i)^calculate\\s+", "")
+                .replaceFirst("(?i)^what is\\s+", "")
+                .replaceFirst("(?i)^solve\\s+", "")
+                .replaceFirst("(?i)^what's\\s+", "")
+                .trim();
         String expression = normalizeMathExpression(originalExpression);
 
         if (expression.isBlank()) {
@@ -251,6 +265,19 @@ public class AgentService {
 
         String text = String.format(Locale.ROOT, "%.10f", value);
         return text.replaceAll("0+$", "").replaceAll("\\.$", "");
+    }
+
+    private String extractAfterIntent(String message, String... intents) {
+        String cleanMessage = message.trim();
+        String lowerMessage = cleanMessage.toLowerCase(Locale.ROOT);
+
+        for (String intent : intents) {
+            if (lowerMessage.startsWith(intent)) {
+                return cleanMessage.substring(intent.length()).trim();
+            }
+        }
+
+        return cleanMessage;
     }
 
     private String agentContext() {
