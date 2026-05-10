@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Hari local secrets and personal data ###
+.env
+.env.*
+!.env.example
+hari-data/
+secrets/
