@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hari</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">H</div>
+        <div>
+          <h1>Hari</h1>
+          <p>Personal Agent</p>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="Hari sections">
+        <button class="nav-item active" type="button">Chat</button>
+        <button class="nav-item" type="button" data-prompt="show memory">Memory</button>
+        <button class="nav-item" type="button" data-prompt="show tasks">Tasks</button>
+        <button class="nav-item" type="button" data-prompt="help">Tools</button>
+      </nav>
+
+      <section class="tool-stack">
+        <div class="panel-title">Quick Tools</div>
+        <button type="button" data-prompt="time">Current time</button>
+        <button type="button" data-prompt="show notes">Saved notes</button>
+        <button type="button" data-prompt="calculate 45 + 12">Calculator</button>
+      </section>
+
+      <section class="side-panel">
+        <div class="panel-title">Status</div>
+        <div class="status-row">
+          <span class="status-dot"></span>
+          <span>Online</span>
+        </div>
+        <div class="mini-metric">
+          <span>Mode</span>
+          <strong>Agent</strong>
+        </div>
+        <div class="mini-metric">
+          <span>Memory</span>
+          <strong>Local</strong>
+        </div>
+        <div class="mini-metric">
+          <span>Identity</span>
+          <strong>Personal</strong>
+        </div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Hari workspace</p>
+          <h2>Your calm personal agent.</h2>
+        </div>
+        <div class="top-actions">
+          <button id="voiceToggleButton" class="text-button" type="button" title="Speak replies">Voice off</button>
+          <button id="newChatButton" class="icon-button" type="button" title="New chat">+</button>
+          <button class="profile-button" type="button" title="Profile">KI</button>
+        </div>
+      </header>
+
+      <section class="chat-card" aria-label="Chat with Hari">
+        <div id="messages" class="messages">
+          <div class="welcome">
+            <div class="welcome-mark">H</div>
+            <h3>Hari is ready.</h3>
+            <p>Ask, speak, remember, calculate, or organize your next task from one focused workspace.</p>
+            <div class="suggestions">
+              <button type="button" data-prompt="help">Help</button>
+              <button type="button" data-prompt="remember my goal is Build Hari into an agentic AI">Remember goal</button>
+              <button type="button" data-prompt="add task Connect Hari to real AI">Add task</button>
+              <button type="button" data-prompt="calculate 12 + 8">Calculate</button>
+            </div>
+          </div>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <input id="messageInput" type="text" placeholder="Message Hari..." autocomplete="off" required>
+          <button id="micButton" class="mic-button" type="button" title="Voice input">Mic</button>
+          <button type="submit">Send</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

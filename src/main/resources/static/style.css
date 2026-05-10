@@ -1,0 +1,472 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #eef3f2;
+  --panel: #ffffff;
+  --panel-soft: #f7faf9;
+  --text: #18211f;
+  --muted: #697874;
+  --line: #dbe5e2;
+  --accent: #16725f;
+  --accent-dark: #0d5144;
+  --accent-soft: #e3f4ef;
+  --gold: #c59b4b;
+  --gold-soft: #fbf4e5;
+  --user: #214ecf;
+  --sidebar: #101b21;
+  --sidebar-soft: #1c2a31;
+  --shadow: 0 24px 70px rgba(19, 34, 42, 0.14);
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 22% 12%, rgba(22, 114, 95, 0.12), transparent 32%),
+    linear-gradient(135deg, #f8fbfa 0%, var(--bg) 52%, #e8efed 100%);
+  margin: 0;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 292px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: relative;
+  background: linear-gradient(180deg, #101b21 0%, #13232a 100%);
+  color: #f8fafc;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(22, 114, 95, 0.12), transparent 42%);
+  pointer-events: none;
+}
+
+.brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark,
+.welcome-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #1b8a74, var(--accent-dark));
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(13, 81, 68, 0.26);
+}
+
+.brand h1,
+.brand p,
+.topbar h2,
+.topbar p,
+.welcome h3,
+.welcome p {
+  margin: 0;
+}
+
+.brand h1 {
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.brand p {
+  color: #a8b3bf;
+  margin-top: 4px;
+}
+
+.nav-list {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  border: 1px solid transparent;
+  background: transparent;
+  color: #cdd6df;
+  text-align: left;
+  padding: 13px 15px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.tool-stack,
+.side-panel {
+  position: relative;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 8px;
+  padding: 16px;
+  backdrop-filter: blur(18px);
+}
+
+.tool-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-stack button {
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.06);
+  color: #eef5f3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tool-stack button:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.side-panel {
+  margin-top: auto;
+}
+
+.panel-title {
+  color: #a8b3bf;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.status-row,
+.mini-metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.status-row {
+  justify-content: flex-start;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #38d27a;
+  box-shadow: 0 0 0 4px rgba(56, 210, 122, 0.15);
+}
+
+.mini-metric span {
+  color: #a8b3bf;
+}
+
+.workspace {
+  padding: 34px 38px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.topbar h2 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin-top: 4px;
+  line-height: 1.05;
+  color: #11221e;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-button,
+.profile-button,
+.text-button {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--text);
+  height: 42px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(24, 33, 31, 0.08);
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.icon-button:hover,
+.profile-button:hover,
+.text-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(22, 114, 95, 0.35);
+  box-shadow: 0 14px 28px rgba(24, 33, 31, 0.12);
+}
+
+.icon-button {
+  width: 42px;
+  font-size: 24px;
+}
+
+.profile-button {
+  width: 46px;
+}
+
+.text-button {
+  padding: 0 14px;
+  min-width: 92px;
+}
+
+.chat-card {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(430px, 1fr) auto;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.messages {
+  padding: 34px;
+  overflow-y: auto;
+  background:
+    linear-gradient(180deg, rgba(22, 114, 95, 0.06), transparent 260px),
+    linear-gradient(135deg, rgba(251, 244, 229, 0.42), transparent 35%),
+    rgba(255, 255, 255, 0.76);
+}
+
+.welcome {
+  max-width: 520px;
+  margin: 80px auto;
+  text-align: center;
+  color: var(--muted);
+}
+
+.welcome-mark {
+  margin: 0 auto 20px;
+  width: 56px;
+  height: 56px;
+  font-size: 22px;
+}
+
+.welcome h3 {
+  color: var(--text);
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.welcome p {
+  margin-top: 10px;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.suggestions button {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 11px 13px;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(24, 33, 31, 0.06);
+}
+
+.suggestions button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.message {
+  display: flex;
+  margin-bottom: 18px;
+}
+
+.message.user {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: min(680px, 78%);
+  padding: 16px 18px;
+  border-radius: 8px;
+  line-height: 1.55;
+  border: 1px solid var(--line);
+  white-space: pre-wrap;
+  box-shadow: 0 12px 28px rgba(24, 33, 31, 0.08);
+}
+
+.sender {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  color: var(--muted);
+}
+
+.message.user .bubble {
+  background: linear-gradient(145deg, #2f5be1, var(--user));
+  color: white;
+  border-color: var(--user);
+}
+
+.message.user .sender {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.message.hari .bubble {
+  background: rgba(247, 250, 249, 0.96);
+}
+
+.composer {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 18px;
+  font-size: 16px;
+  outline: none;
+  background: #fbfdfc;
+}
+
+.composer input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.composer button {
+  border: 0;
+  background: linear-gradient(145deg, #1b836f, var(--accent-dark));
+  color: white;
+  border-radius: 8px;
+  padding: 0 24px;
+  min-width: 92px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(22, 114, 95, 0.22);
+}
+
+.composer button:hover {
+  background: var(--accent-dark);
+}
+
+.composer .mic-button {
+  background: var(--panel-soft);
+  color: var(--text);
+  border: 1px solid var(--line);
+  min-width: 74px;
+}
+
+.composer .mic-button:hover,
+.composer .mic-button.listening {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+  border-color: var(--accent);
+}
+
+@media (max-width: 840px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .workspace {
+    padding: 16px;
+  }
+
+  .topbar h2 {
+    font-size: 22px;
+  }
+
+  .chat-card {
+    grid-template-rows: minmax(420px, 1fr) auto;
+  }
+
+  .messages {
+    padding: 18px;
+  }
+
+  .welcome {
+    margin: 60px auto;
+  }
+
+  .bubble {
+    max-width: 90%;
+  }
+
+  .composer {
+    padding: 12px;
+  }
+
+  .composer button {
+    min-width: 78px;
+    padding: 0 16px;
+  }
+
+  .composer .mic-button {
+    min-width: 64px;
+  }
+}
