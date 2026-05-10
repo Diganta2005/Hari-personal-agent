@@ -26,9 +26,11 @@ public class AgentService {
     private final List<String> tasks = new ArrayList<>();
     private final Map<String, String> memories = new LinkedHashMap<>();
     private final OpenAiService openAiService;
+    private final RagService ragService;
 
-    public AgentService(OpenAiService openAiService) {
+    public AgentService(OpenAiService openAiService, RagService ragService) {
         this.openAiService = openAiService;
+        this.ragService = ragService;
         loadMemory();
     }
 
@@ -88,6 +90,12 @@ public class AgentService {
             return removeItem(cleanMessage, command, tasks, "task");
         }
 
+        if (lowerMessage.startsWith("search ") || lowerMessage.startsWith("search knowledge ")
+                || lowerMessage.startsWith("use knowledge ") || lowerMessage.startsWith("find in knowledge ")) {
+            String query = extractAfterIntent(cleanMessage, "search knowledge", "use knowledge", "find in knowledge", "search");
+            return ragService.search(query);
+        }
+
         if (lowerMessage.startsWith("calculate ") || lowerMessage.startsWith("what is ")
                 || lowerMessage.startsWith("solve ") || looksLikeMath(lowerMessage)) {
             return calculate(cleanMessage);
@@ -110,6 +118,7 @@ public class AgentService {
                 show me my notes
                 remind me to practice coding
                 show me my tasks
+                search knowledge agent memory
                 what is (12 + 8) * 3
                 solve 20% of 450
                 what is 2^8 + sqrt(81)
@@ -292,6 +301,7 @@ public class AgentService {
 
         context.append("Notes count: ").append(notes.size()).append("\n");
         context.append("Tasks count: ").append(tasks.size()).append("\n");
+        context.append(ragService.buildContext("Hari personal agent AI memory tools"));
         return context.toString();
     }
 
