@@ -1,9 +1,10 @@
-const CACHE_NAME = "hari-app-v1";
+const CACHE_NAME = "hari-app-v2";
 const APP_ASSETS = [
   "/",
   "/index.html",
   "/style.css",
   "/app.js",
+  "/three-scene.js",
   "/manifest.json",
   "/icons/icon.svg"
 ];
