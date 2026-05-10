@@ -81,7 +81,7 @@ public class AgentService {
             return removeItem(cleanMessage, command, tasks, "task");
         }
 
-        if (lowerMessage.startsWith("calculate ")) {
+        if (lowerMessage.startsWith("calculate ") || looksLikeMath(lowerMessage)) {
             return calculate(cleanMessage);
         }
 
@@ -103,7 +103,9 @@ public class AgentService {
                 add task Build Hari memory
                 show tasks
                 complete task 1
-                calculate 12 + 8
+                calculate (12 + 8) * 3
+                calculate 20% of 450
+                calculate 2^8 + sqrt(81)
                 time
 
                 If your OpenAI API key is set, I can also answer normal questions using a real AI model.
@@ -199,34 +201,56 @@ public class AgentService {
     }
 
     private String calculate(String message) {
-        String expression = message.replaceFirst("(?i)^calculate\\s+", "").trim();
-        Matcher matcher = Pattern.compile("^(-?\\d+(?:\\.\\d+)?)\\s*([+\\-*/])\\s*(-?\\d+(?:\\.\\d+)?)$").matcher(expression);
+        String originalExpression = message.replaceFirst("(?i)^calculate\\s+", "").trim();
+        String expression = normalizeMathExpression(originalExpression);
 
-        if (!matcher.matches()) {
-            return "I can calculate simple expressions like: calculate 12 + 8";
+        if (expression.isBlank()) {
+            return "Try a calculation like: calculate (12 + 8) * 3";
         }
 
-        double left = Double.parseDouble(matcher.group(1));
-        String operator = matcher.group(2);
-        double right = Double.parseDouble(matcher.group(3));
+        try {
+            double result = new MathParser(expression).parse();
+            return originalExpression + " = " + formatNumber(result);
+        } catch (ArithmeticException | IllegalArgumentException error) {
+            return "I could not calculate that: " + error.getMessage();
+        }
+    }
 
-        if (operator.equals("/") && right == 0) {
-            return "I cannot divide by zero.";
+    private boolean looksLikeMath(String message) {
+        return message.matches(".*\\d+\\s*(\\+|-|\\*|/|\\^|%|plus|minus|times|multiplied|divided)\\s*\\d+.*");
+    }
+
+    private String normalizeMathExpression(String expression) {
+        return expression.toLowerCase(Locale.ROOT)
+                .replaceAll(",", "")
+                .replaceAll("\\bplus\\b", "+")
+                .replaceAll("\\bminus\\b", "-")
+                .replaceAll("\\btimes\\b", "*")
+                .replaceAll("\\bmultiplied by\\b", "*")
+                .replaceAll("\\bmultiplied\\b", "*")
+                .replaceAll("\\bdivide by\\b", "/")
+                .replaceAll("\\bdivided by\\b", "/")
+                .replaceAll("\\bdivided\\b", "/")
+                .replaceAll("\\binto\\b", "*")
+                .replaceAll("\\bof\\b", "*")
+                .replaceAll("\\bsquare root of\\b", "sqrt")
+                .replaceAll("\\bsquare root\\b", "sqrt")
+                .replaceAll("\\bpower\\b", "^")
+                .replaceAll("\\bto the power of\\b", "^")
+                .replaceAll("\\bpi\\b", String.valueOf(Math.PI));
+    }
+
+    private String formatNumber(double value) {
+        if (!Double.isFinite(value)) {
+            throw new ArithmeticException("result is not a finite number");
         }
 
-        double result = switch (operator) {
-            case "+" -> left + right;
-            case "-" -> left - right;
-            case "*" -> left * right;
-            case "/" -> left / right;
-            default -> 0;
-        };
-
-        if (result == Math.rint(result)) {
-            return expression + " = " + (long) result;
+        if (Math.abs(value - Math.rint(value)) < 0.0000000001) {
+            return String.valueOf((long) Math.rint(value));
         }
 
-        return expression + " = " + result;
+        String text = String.format(Locale.ROOT, "%.10f", value);
+        return text.replaceAll("0+$", "").replaceAll("\\.$", "");
     }
 
     private String agentContext() {
